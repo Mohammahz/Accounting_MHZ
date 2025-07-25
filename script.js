@@ -1,5 +1,6 @@
 const amountInput = document.getElementById("amount");
 const typeSelect = document.getElementById("type");
+const descriptionInput = document.getElementById("description");
 const addBtn = document.getElementById("add-transaction");
 const incomeTotal = document.getElementById("income-total");
 const expenseTotal = document.getElementById("expense-total");
@@ -13,16 +14,20 @@ const notification = document.getElementById("notification");
 const monthlyBudgetInput = document.getElementById("monthly-budget");
 const budgetWarning = document.getElementById("budget-warning");
 
+const moreInfoBtn = document.getElementById("more-info-btn");
+const moreInfoModal = document.getElementById("more-info-modal");
+const closeInfoBtn = document.getElementById("close-info");
+
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 let monthlyBudget = Number(localStorage.getItem("monthlyBudget")) || 0;
 
 let pieChart, barChart, lineChart;
 
 const colorsMap = {
-  income: "#38b000",    // سبز
-  expense: "#d00000",   // قرمز
-  saving: "#FFD700",    // زرد
-  charity: "#0077B6"    // آبی
+  income: "#38b000",
+  expense: "#d00000",
+  saving: "#FFD700",
+  charity: "#0077B6"
 };
 
 function saveToLocalStorage() {
@@ -49,7 +54,6 @@ function updateSummary() {
   charityTotal.textContent = `${sums.charity.toLocaleString()} تومان`;
   balance.textContent = `${(sums.income - (sums.expense + sums.saving + sums.charity)).toLocaleString()} تومان`;
 
-  // هشدار بودجه
   if (monthlyBudget <= 0) {
     budgetWarning.textContent = "";
     return;
@@ -76,7 +80,7 @@ function renderTransactions() {
       <span>${t.amount.toLocaleString()} تومان (${labelFa(t.type)}) - توضیح: ${t.description || '-'} - تاریخ: ${t.date}</span>
       <div class="btn-group">
         <button class="edit-btn" onclick="editTransaction(${index})" title="ویرایش">✏️</button>
-        <button class="delete-btn" onclick="deleteTransaction(${index})" title="حذف">❌</button>
+        <button class="delete-btn" onclick="deleteTransaction(${index})" title="حذف">✖️</button>
       </div>
     `;
     list.appendChild(li);
@@ -105,7 +109,7 @@ function deleteTransaction(index) {
 function editTransaction(index) {
   const t = transactions[index];
   const newAmountStr = prompt("مبلغ جدید را وارد کنید:", t.amount);
-  if (newAmountStr === null) return; // لغو شد
+  if (newAmountStr === null) return;
 
   const newAmount = Number(newAmountStr);
   if (isNaN(newAmount) || newAmount <= 0) {
@@ -149,196 +153,132 @@ function addTransaction() {
 }
 
 function updateCharts() {
-  const labels = ["درآمد", "هزینه", "پس‌انداز", "کمک به خیریه"];
-  const keys = ["income", "expense", "saving", "charity"];
-
   const sums = { income: 0, expense: 0, saving: 0, charity: 0 };
   transactions.forEach(t => {
     sums[t.type] = (sums[t.type] || 0) + t.amount;
   });
 
-  const data = [
-    sums.income,
-    sums.expense,
-    sums.saving,
-    sums.charity
-  ];
+  // داده برای نمودار دایره‌ای (Pie)
+  const pieData = {
+    labels: ["درآمد", "هزینه", "پس‌انداز", "کمک به خیریه"],
+    datasets: [{
+      data: [sums.income, sums.expense, sums.saving, sums.charity],
+      backgroundColor: [
+        colorsMap.income,
+        colorsMap.expense,
+        colorsMap.saving,
+        colorsMap.charity
+      ],
+      borderWidth: 0
+    }]
+  };
 
-  const backgroundColors = [
-    "rgba(56, 176, 0, 0.8)",
-    "rgba(208, 0, 0, 0.8)",
-    "rgba(255, 215, 0, 0.8)",
-    "rgba(0, 119, 182, 0.8)"
-  ];
-
-  const hoverColors = [
-    "rgba(56, 176, 0, 1)",
-    "rgba(208, 0, 0, 1)",
-    "rgba(255, 215, 0, 1)",
-    "rgba(0, 119, 182, 1)"
-  ];
-
+  // حذف نمودار قبلی قبل از ساخت مجدد (برای جلوگیری از خطا)
   if (pieChart) pieChart.destroy();
-  if (barChart) barChart.destroy();
-  if (lineChart) lineChart.destroy();
-
-  // Pie Chart با درصد در tooltip و بدون توخالی بودن
   const pieCtx = document.getElementById("pieChart").getContext("2d");
   pieChart = new Chart(pieCtx, {
     type: "pie",
-    data: {
-      labels,
-      datasets: [{
-        data,
-        backgroundColor: backgroundColors,
-        hoverBackgroundColor: hoverColors,
-        borderWidth: 2,
-        borderColor: document.body.classList.contains("dark") ? "#222" : "#fff",
-        hoverOffset: 20
-      }]
-    },
+    data: pieData,
     options: {
-      animation: { animateRotate: true, duration: 1200, easing: 'easeOutQuart' },
+      responsive: true,
       plugins: {
-        legend: { 
-          position: 'bottom',
-          labels: { 
-            color: document.body.classList.contains("dark") ? "#fff" : "#000",
-            font: { size: 14, weight: '600' }
+        legend: {
+          position: "bottom",
+          labels: {
+            font: { family: "'Vazirmatn', sans-serif", size: 14 }
           }
         },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const label = context.label || '';
-              const value = context.parsed;
-              const data = context.chart.data.datasets[0].data;
-              const total = data.reduce((a, b) => a + b, 0);
-              const percent = total ? ((value / total) * 100).toFixed(2) : 0;
-              return `${label}: ${value.toLocaleString()} تومان (${percent}%)`;
-            }
-          },
-          backgroundColor: '#222',
-          titleColor: '#fff',
-          bodyColor: '#eee',
-          cornerRadius: 6,
-          padding: 10
-        }
+        tooltip: { enabled: true }
       }
     }
   });
 
-  // Bar Chart - باریک‌تر و با گرادینت بهتر
+  // داده برای نمودار میله‌ای (Bar) با دسته‌بندی تراکنش‌ها
+  const types = ["income", "expense", "saving", "charity"];
+  const labels = types.map(t => labelFa(t));
+  const values = types.map(t => sums[t]);
+
+  if (barChart) barChart.destroy();
   const barCtx = document.getElementById("barChart").getContext("2d");
-  const gradientFills = backgroundColors.map((color) => {
-    const grad = barCtx.createLinearGradient(0, 0, 0, 300);
-    grad.addColorStop(0, color.replace("0.8", "1"));
-    grad.addColorStop(1, color.replace("0.8", "0.4"));
-    return grad;
-  });
   barChart = new Chart(barCtx, {
     type: "bar",
-    data: { 
-      labels, 
+    data: {
+      labels: labels,
       datasets: [{
-        label: "مقدار (تومان)", 
-        data, 
-        backgroundColor: gradientFills,
-        borderRadius: 12,
-        borderSkipped: false,
-        hoverBackgroundColor: hoverColors
+        label: "مجموع (تومان)",
+        data: values,
+        backgroundColor: Object.values(colorsMap),
+        borderRadius: 10,
+        borderSkipped: false
       }]
     },
     options: {
       responsive: true,
       scales: {
         y: {
-          ticks: { color: document.body.classList.contains("dark") ? "#fff" : "#000" },
           beginAtZero: true,
-          grid: { color: 'rgba(0,0,0,0.1)' }
-        },
-        x: {
-          ticks: { color: document.body.classList.contains("dark") ? "#fff" : "#000" },
-          maxBarThickness: 12,
-          grid: { display: false }
+          ticks: {
+            callback: val => val.toLocaleString()
+          }
         }
       },
       plugins: {
-        legend: {
-          labels: { color: document.body.classList.contains("dark") ? "#fff" : "#000" }
-        },
-        tooltip: {
-          backgroundColor: '#333',
-          titleColor: '#fff',
-          bodyColor: '#eee',
-          cornerRadius: 6,
-          padding: 8
-        }
-      },
-      animation: {
-        duration: 1200,
-        easing: 'easeOutQuart'
+        legend: { display: false },
+        tooltip: { enabled: true }
       }
     }
   });
 
-  // Line Chart - روند با انیمیشن و سایه و نقاط بزرگ‌تر
-  const lineCtx = document.getElementById("lineChart").getContext("2d");
+  // داده برای نمودار خطی (Line) - روند ساده بر اساس تراکنش‌ها به ترتیب تاریخ (اینجا تاریخ شمسی است ولی فرض می‌کنیم هر تراکنش به ترتیب اضافه شده)
+  // برای نمودار خطی، مجموع تجمعی درآمد منهای مجموع تجمعی هزینه، پس‌انداز، خیریه به صورت روزانه ساده‌سازی شده
+  const sortedTransactions = [...transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
+  let cumIncome = 0, cumExpense = 0, cumSaving = 0, cumCharity = 0;
+  const labelsLine = [];
+  const dataLine = [];
 
-  const datesSet = new Set(transactions.map(t => t.date));
-  const dates = [...datesSet].sort((a,b) => new Date(a) - new Date(b));
-
-  const lineDatasets = keys.map(key => {
-    const vals = dates.map(date =>
-      transactions.filter(t => t.type === key && t.date === date).reduce((sum,t) => sum + t.amount, 0)
-    );
-    return {
-      label: labels[keys.indexOf(key)],
-      data: vals,
-      borderColor: backgroundColors[keys.indexOf(key)],
-      backgroundColor: backgroundColors[keys.indexOf(key)].replace("0.8", "0.3"),
-      fill: true,
-      tension: 0.4,
-      pointRadius: 6,
-      pointHoverRadius: 8,
-      borderWidth: 3,
-      cubicInterpolationMode: 'monotone'
-    };
+  sortedTransactions.forEach((t, i) => {
+    if (t.type === "income") cumIncome += t.amount;
+    else if (t.type === "expense") cumExpense += t.amount;
+    else if (t.type === "saving") cumSaving += t.amount;
+    else if (t.type === "charity") cumCharity += t.amount;
+    labelsLine.push(t.date);
+    dataLine.push(cumIncome - (cumExpense + cumSaving + cumCharity));
   });
 
+  if (lineChart) lineChart.destroy();
+  const lineCtx = document.getElementById("lineChart").getContext("2d");
   lineChart = new Chart(lineCtx, {
     type: "line",
-    data: { labels: dates, datasets: lineDatasets },
+    data: {
+      labels: labelsLine,
+      datasets: [{
+        label: "موجودی تجمعی (تومان)",
+        data: dataLine,
+        fill: true,
+        backgroundColor: "rgba(56,176,0,0.2)",
+        borderColor: colorsMap.income,
+        tension: 0.3,
+        pointRadius: 3,
+        pointHoverRadius: 6
+      }]
+    },
     options: {
       responsive: true,
       scales: {
         y: {
-          beginAtZero: true,
-          ticks: { color: document.body.classList.contains("dark") ? "#fff" : "#000" },
-          grid: { color: 'rgba(0,0,0,0.1)' }
-        },
-        x: {
-          ticks: { color: document.body.classList.contains("dark") ? "#fff" : "#000" },
-          grid: { display: false }
+          beginAtZero: false,
+          ticks: {
+            callback: val => val.toLocaleString()
+          }
         }
       },
       plugins: {
         legend: {
-          labels: { color: document.body.classList.contains("dark") ? "#fff" : "#000" },
-          position: 'bottom',
-          labels: { font: { size: 14, weight: '600' } }
+          labels: {
+            font: { family: "'Vazirmatn', sans-serif", size: 14 }
+          }
         },
-        tooltip: {
-          backgroundColor: '#222',
-          titleColor: '#fff',
-          bodyColor: '#eee',
-          cornerRadius: 6,
-          padding: 10
-        }
-      },
-      animation: {
-        duration: 1500,
-        easing: 'easeOutQuart'
+        tooltip: { enabled: true }
       }
     }
   });
@@ -379,10 +319,23 @@ monthlyBudgetInput.addEventListener("input", () => {
   }
 });
 
-// رویدادها
 addBtn.addEventListener("click", addTransaction);
 toggleTheme.addEventListener("click", toggleDarkMode);
 clearAllBtn.addEventListener("click", clearAllTransactions);
+
+moreInfoBtn.addEventListener("click", () => {
+  moreInfoModal.classList.add("modal-show");
+});
+
+closeInfoBtn.addEventListener("click", () => {
+  moreInfoModal.classList.remove("modal-show");
+});
+
+moreInfoModal.addEventListener("click", (e) => {
+  if (e.target === moreInfoModal) {
+    moreInfoModal.classList.remove("modal-show");
+  }
+});
 
 loadTheme();
 renderTransactions();
