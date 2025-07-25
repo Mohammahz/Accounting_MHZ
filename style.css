@@ -107,6 +107,29 @@ button#add-transaction:hover {
   background-color: #5ec3d3;
 }
 
+/* انیمیشن ملایم کارت‌ها */
+.animate-card {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeSlideIn 0.8s forwards;
+  animation-delay: 0.15s;
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* برای اینکه هر کارت یکم با تاخیر بیاد */
+.summary > .box:nth-child(1) { animation-delay: 0.1s; }
+.summary > .box:nth-child(2) { animation-delay: 0.25s; }
+.summary > .box:nth-child(3) { animation-delay: 0.4s; }
+.summary > .box:nth-child(4) { animation-delay: 0.55s; }
+.summary > .box:nth-child(5) { animation-delay: 0.7s; }
+
+
 .summary {
   display: flex;
   gap: 1rem;
@@ -368,22 +391,134 @@ footer {
   background-color: var(--charity-color);
 }
 
-@media (max-width: 600px) {
+/* مودال اطلاعات بیشتر */
+
+#more-info-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  transition: opacity 0.4s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+#more-info-modal.modal-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  width: 320px;
+  max-width: 90vw;
+  padding: 2rem;
+  border-radius: var(--card-radius);
+  box-shadow: 0 0 20px rgba(0,0,0,0.25);
+  position: relative;
+  animation: slideInRight 0.5s ease forwards;
+}
+
+body.dark .modal-content {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+}
+
+.modal-content h2 {
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--main-color);
+  padding-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.info-item + .info-item {
+  margin-top: 1.3rem;
+}
+
+.info-item h3 {
+  font-weight: 700;
+  color: var(--main-color);
+  margin-bottom: 0.3rem;
+}
+
+.info-item p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+body.dark .info-item p {
+  color: #ddd;
+}
+
+#close-info {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #d00000;
+  transition: color 0.3s ease;
+}
+
+#close-info:hover {
+  color: #a00000;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(150px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ریسپانسیو */
+
+@media (max-width: 720px) {
   .summary {
     flex-direction: column;
   }
-  header {
-    flex-direction: column;
-    gap: 1rem;
-  }
+
   .form-section {
     flex-direction: column;
   }
-  .budget-section {
-    flex-direction: column;
-    gap: 0.5rem;
+
+  .form-section input, .form-section select, .form-section button#add-transaction {
+    width: 100%;
   }
-  #transaction-list li span {
-    max-width: 100%;
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  header > div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .charts canvas {
+    max-height: 220px !important;
+  }
+
+  #more-info-modal .modal-content {
+    width: 90vw;
   }
 }
