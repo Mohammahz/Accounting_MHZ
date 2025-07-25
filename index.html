@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>حساب دار</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.png" type="image/png">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>دفتر حساب شخصی (حساب دار)</h1>
+      <div>
+        <button id="toggle-theme">🌓 تغییر تم</button>
+        <button id="clear-all">🗑️ حذف کردن همه تراکنش‌ها </button>
+      </div>
+    </header>
+
+    <section class="form-section">
+      <input type="number" id="amount" placeholder="مبلغ را وارد کنید..." />
+      <select id="type">
+        <option value="income">درآمد</option>
+        <option value="expense">هزینه</option>
+        <option value="saving">پس‌انداز</option>
+        <option value="charity">کمک به خیریه</option>
+      </select>
+      <input type="text" id="description" placeholder="توضیح کوتاه (اختیاری)" />
+      <button id="add-transaction">➕ افزودن</button>
+    </section>
+
+    <section class="summary">
+      <div class="box income-box">
+        <h3>درآمد</h3>
+        <p id="income-total">0 تومان</p>
+      </div>
+      <div class="box expense-box">
+        <h3>هزینه</h3>
+        <p id="expense-total">0 تومان</p>
+      </div>
+      <div class="box saving-box">
+        <h3>پس‌انداز</h3>
+        <p id="saving-total">0 تومان</p>
+      </div>
+      <div class="box charity-box">
+        <h3>کمک به خیریه</h3>
+        <p id="charity-total">0 تومان</p>
+      </div>
+      <div class="box balance-box">
+        <h3>موجودی</h3>
+        <p id="balance">0 تومان</p>
+      </div>
+    </section>
+
+    <section class="budget-section">
+      <label for="monthly-budget">بودجه ماهانه (تومان): </label>
+      <input type="number" id="monthly-budget" placeholder="مثلاً 5000000" min="0" />
+      <p id="budget-warning" class="warning-text"></p>
+    </section>
+
+    <section class="charts">
+      <canvas id="pieChart"></canvas>
+      <canvas id="barChart"></canvas>
+      <canvas id="lineChart"></canvas>
+    </section>
+
+    <section class="legend">
+      <span><span class="color-box income"></span> درآمد</span>
+      <span><span class="color-box expense"></span> هزینه</span>
+      <span><span class="color-box saving"></span> پس‌انداز</span>
+      <span><span class="color-box charity"></span> کمک به خیریه</span>
+    </section>
+
+    <section class="history">
+      <h2>لیست تراکنش‌ها</h2>
+      <ul id="transaction-list"></ul>
+    </section>
+
+    <div id="notification" class="hidden"></div>
+
+    <footer>
+      Made by Hajizadeh
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

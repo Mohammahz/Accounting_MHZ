@@ -1,0 +1,389 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap');
+
+:root {
+  --main-color: #90e0ef;
+  --bg-light: #f1faff;
+  --bg-dark: #1e1e1e;
+  --text-light: #ffffff;
+  --text-dark: #222;
+  --income-color: #38b000;
+  --expense-color: #d00000;
+  --saving-color: #FFD700;
+  --charity-color: #0077B6;
+  --card-radius: 1rem;
+  --transition: 0.4s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Vazirmatn', sans-serif;
+}
+
+body {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  transition: var(--transition);
+  padding: 1rem;
+}
+
+body.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 1rem;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: var(--main-color);
+}
+
+header button {
+  margin-left: 0.5rem;
+  background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(47, 128, 237, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+header button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(47, 128, 237, 0.6);
+}
+
+.form-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+input[type="number"],
+select,
+input[type="text"] {
+  padding: 0.6rem;
+  border-radius: var(--card-radius);
+  border: 1px solid #ccc;
+  flex: 1;
+  min-width: 120px;
+}
+
+input[type="text"] {
+  flex: 2;
+}
+
+button#add-transaction {
+  background-color: var(--main-color);
+  color: white;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: var(--card-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+button#add-transaction:hover {
+  background-color: #5ec3d3;
+}
+
+.summary {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.box {
+  flex: 1;
+  min-width: 120px;
+  padding: 1rem;
+  border-radius: var(--card-radius);
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.income-box {
+  background-color: #d8f8d8;
+  color: var(--income-color);
+}
+
+.expense-box {
+  background-color: #ffe0e0;
+  color: var(--expense-color);
+}
+
+.saving-box {
+  background-color: #fff9cc;
+  color: var(--saving-color);
+}
+
+.charity-box {
+  background-color: #cce7ff;
+  color: var(--charity-color);
+}
+
+.balance-box {
+  background-color: #e0f0ff;
+  color: #005f73;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+body.dark .income-box {
+  background-color: #214f21;
+  color: #aaffaa;
+}
+
+body.dark .expense-box {
+  background-color: #4a1e1e;
+  color: #ffaaaa;
+}
+
+body.dark .saving-box {
+  background-color: #665c00;
+  color: #fffaa3;
+}
+
+body.dark .charity-box {
+  background-color: #003b5c;
+  color: #a8d0ff;
+}
+
+body.dark .balance-box {
+  background-color: #2a4d5c;
+  color: #caf0f8;
+}
+
+.budget-section {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.budget-section input[type="number"] {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.6rem;
+  border-radius: var(--card-radius);
+  border: 1px solid #ccc;
+}
+
+.warning-text {
+  color: #d00000;
+  font-weight: 700;
+  min-width: 100%;
+}
+
+.charts {
+  margin-bottom: 2rem;
+}
+
+canvas {
+  margin: 1rem 0;
+  width: 100% !important;
+  max-height: 300px;
+  border-radius: var(--card-radius);
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+  background: var(--bg-light);
+  transition: var(--transition);
+}
+
+body.dark canvas {
+  background: var(--bg-dark);
+  box-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+
+.charts canvas#barChart {
+  max-height: 220px !important;
+}
+
+.history h2 {
+  margin-bottom: 1rem;
+  color: var(--main-color);
+}
+
+#transaction-list {
+  list-style: none;
+}
+
+#transaction-list li {
+  background: #fff;
+  padding: 0.8rem;
+  margin-bottom: 0.6rem;
+  border-radius: var(--card-radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  transition: var(--transition);
+  position: relative;
+}
+
+#transaction-list li span {
+  display: block;
+  max-width: 65%;
+  word-break: break-word;
+}
+
+body.dark #transaction-list li {
+  background: #2c2c2c;
+}
+
+#transaction-list li.income {
+  border-right: 5px solid var(--income-color);
+}
+
+#transaction-list li.expense {
+  border-right: 5px solid var(--expense-color);
+}
+
+#transaction-list li.saving {
+  border-right: 5px solid var(--saving-color);
+}
+
+#transaction-list li.charity {
+  border-right: 5px solid var(--charity-color);
+}
+
+/* دکمه حذف (ضربدر) */
+#transaction-list li button.delete-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #d00000;
+  padding: 0 6px;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+#transaction-list li button.delete-btn:hover {
+  color: #a00000;
+  transform: scale(1.2);
+}
+
+/* دکمه ویرایش */
+#transaction-list li button.edit-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #0077B6;
+  padding: 0 6px;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+#transaction-list li button.edit-btn:hover {
+  color: #005f8c;
+  transform: scale(1.2);
+}
+
+#notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #90e0ef;
+  color: #000;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  font-size: 1rem;
+  transition: opacity 0.5s ease;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#notification.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.legend span {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  border-radius: 6px;
+}
+
+.color-box.income {
+  background-color: var(--income-color);
+}
+.color-box.expense {
+  background-color: var(--expense-color);
+}
+.color-box.saving {
+  background-color: var(--saving-color);
+}
+.color-box.charity {
+  background-color: var(--charity-color);
+}
+
+@media (max-width: 600px) {
+  .summary {
+    flex-direction: column;
+  }
+  header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .form-section {
+    flex-direction: column;
+  }
+  .budget-section {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  #transaction-list li span {
+    max-width: 100%;
+  }
+}
